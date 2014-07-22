@@ -1,12 +1,11 @@
-__author__ = 'Weichao Xu'
-__version__ = "0.0.1"
-__status__ = "Dev"
-
 """This module contains my common ultilities functions
     1 create win32 mouse cursor event
     2 config for progressbar, logging
     3 Class: MyTimer
 """
+__author__ = 'Weichao Xu'
+__version__ = "0.0.1"
+__status__ = "Dev"
 # ########## imports ##########
 import sys, os, re, string, time, logging
 import math, numpy, random
@@ -14,6 +13,8 @@ import win32api, win32con, win32gui
 import progressbar as pb
 from ftplib import FTP
 import pprint
+import psutil
+import subprocess
 
 mypbwidgets = ['GLobal: ', pb.Percentage(), pb.Bar(marker=pb.RotatingMarker()), ' ', pb.ETA()]
 loggingfmt = '%(name)-10s|%(asctime)s|%(levelname)8s|  %(message)s'
@@ -23,13 +24,12 @@ logging.basicConfig(level=logging.NOTSET, stream=sys.stdout, \
 l = logging.getLogger(__name__)
 
 
-def main():
-    get_cursor_xy()
-    clickandreturn(49, 55)
+
 
 
 # # WIN32API Mouse Click
 def click(x, y):
+    """ click(x, y): click at (x,y) """
     xx, yy = win32api.GetCursorPos()
     win32api.SetCursorPos((x, y))
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, x, y, 0, 0)
@@ -44,6 +44,8 @@ def get_cursor_xy():
 
 
 def clickandreturn(x, y):
+    """ clickandreturn(x, y)
+    move the mouse, click and return to previous position"""
     xx, yy = win32api.GetCursorPos()
     win32api.SetCursorPos((x, y))
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, x, y, 0, 0)
@@ -117,6 +119,24 @@ def importinfo():
     print sys.modules.keys()
 
 
+# ########## Process Management ##########
+def repeatexecute(consolecmd,waittimesec=60):
+    l.debug(consolecmd)
+    while True:
+        tloop0=time.time()
+        try:
+            subprocess.Popen(consolecmd)
+        except:
+            pass
+        texe=time.time()-tloop0
+        timetowait=max(waittimesec-texe,0)
+        pbar=pb.ProgressBar(widgets=mypbwidgets,maxval=int(math.floor(timetowait)))
+        pbar.start()
+        for ct in xrange(int(math.floor(timetowait))):
+            pbar.update(ct)
+            time.sleep(1)
+        pbar.finish()
+
 class MyTimer:
     'My time to get '
 
@@ -160,13 +180,12 @@ class MyTimer:
         return time.strftime("%m%d-%H%M%S", self.timenow)
 
 
+def main():
+    repeatexecute(r"C:\Program Files (x86)\Mozilla Firefox\firefox.exe",3)
+
+
 if __name__ == "__main__":
     main()
-    T = MyTimer()
-    # importinfo()
-    print T.__str__()
-    print T.__repr__()
-    generate_random_int_array(100, 100)
 else:
     print "%10s:      %s" % ("CWD", os.getcwdu())
     print "%10s:      %s" % ("Imported", __file__)
