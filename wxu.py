@@ -30,6 +30,7 @@ def main():
 
 # # WIN32API Mouse Click
 def click(x, y):
+    """ click(x, y): click at (x,y) """
     xx, yy = win32api.GetCursorPos()
     win32api.SetCursorPos((x, y))
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, x, y, 0, 0)
@@ -44,6 +45,8 @@ def get_cursor_xy():
 
 
 def clickandreturn(x, y):
+	""" clickandreturn(x, y)
+	move the mouse, click and return to previous position"""
     xx, yy = win32api.GetCursorPos()
     win32api.SetCursorPos((x, y))
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, x, y, 0, 0)
@@ -162,11 +165,6 @@ class MyTimer:
 
 if __name__ == "__main__":
     main()
-    T = MyTimer()
-    # importinfo()
-    print T.__str__()
-    print T.__repr__()
-    generate_random_int_array(100, 100)
 else:
     print "%10s:      %s" % ("CWD", os.getcwdu())
     print "%10s:      %s" % ("Imported", __file__)
